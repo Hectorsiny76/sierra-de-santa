@@ -1,0 +1,13 @@
+FROM serversideup/php:8.5-fpm-nginx
+
+ARG USER_ID=1000
+ARG USER_GROUP=1000
+
+RUN docker-php-serversideup-set-id www-data ${USER_ID} ${USER_GROUP} \
+    && docker-php-serversideup-set-file-permisions --owner www-data:www-data --dir /var,
+
+ENV PHP_OPCACHE_ENABLE=0
+ENV PHP_DISPLAY_ERRORS=1
+ENV AUTORUN_ENABLED=true
+
+WORKDIR /var/www/html
