@@ -4,11 +4,13 @@ services:
         context: .
         dockerfile: Dockerfile.dev
       ports:
-          - "8000:8000"
+          - "8000:8080"
       volumes:
           - .:/var/www/html
       depends_on:
           -   db
+      environment:
+          AUTORUN_ENABLED: "false"
 
   db:
       image: postgres:17
