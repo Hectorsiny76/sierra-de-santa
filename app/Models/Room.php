@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
 {
+    use HasFactory;
+
     protected $table = 'rooms';
     protected $fillable = ['name', 'slug', 'general_description', 'characteristics', 'price', 'room_type_id'];
     protected $hidden = ['created_at', 'updated_at'];

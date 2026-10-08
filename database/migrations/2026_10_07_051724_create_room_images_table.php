@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('path');
             $table->string('name');
             $table->string('description')->nullable();
+            $table->foreignId('room_id')->references('id')->on('rooms')->onDelete('cascade');
             $table->timestamps();
         });
     }
