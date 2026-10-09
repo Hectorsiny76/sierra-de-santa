@@ -21,7 +21,7 @@ class RoomFactory extends Factory
         $validNames = [];
 
         for($x = 1; $x <= 10; $x++) {
-            $validNames[] = 'Cuarto '.$this->faker->word;
+            $validNames[] = 'Cuarto '.$this->faker->word.' '.$this->faker->randomNumber(2);
         }
 
         return [

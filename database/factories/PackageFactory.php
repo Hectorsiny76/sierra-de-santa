@@ -17,10 +17,8 @@ class PackageFactory extends Factory
      */
     public function definition(): array
     {
-        $validNames = ['PacketeRelajes', 'PaqueteVivas', 'PacketeEmociones', 'PaqueteEncantes'];
-
         return [
-            'name' => $this->faker->randomElement($validNames),
+            'name' => 'Paquete '.$this->faker->word.' '.$this->faker->randomNumber(2),
             'short_description' => $this->faker->text.'- 1 -',
             'long_description' => $this->faker->text.'- 2 -',
             'price' => $this->faker->randomNumber(3),
