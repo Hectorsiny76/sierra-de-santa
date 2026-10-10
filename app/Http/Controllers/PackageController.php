@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePackageRequest;
+use App\Http\Requests\UpdatePackageRequest;
 use App\Http\Resources\PackageResource;
 use App\Models\Package;
 use Illuminate\Http\Request;
@@ -19,9 +21,11 @@ class PackageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePackageRequest $request)
     {
-        //
+        $this->authorize('create', Package::class);
+        $package = Package::create($request->validated());
+        return new PackageResource($package);
     }
 
     /**
@@ -35,9 +39,11 @@ class PackageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Package $package)
+    public function update(UpdatePackageRequest $request, Package $package)
     {
-        //
+        $this->authorize('update', $package);
+        $package->update($request->validated());
+        return new PackageResource($package);
     }
 
     /**
@@ -45,6 +51,8 @@ class PackageController extends Controller
      */
     public function destroy(Package $package)
     {
-        //
+        $this->authorize('delete', $package);
+        $package->delete();
+        return response()->json(["message" => "Registro eliminado"]);
     }
 }

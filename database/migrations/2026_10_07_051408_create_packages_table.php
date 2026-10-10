@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('short_description');
-            $table->string('long_description');
+            $table->text('long_description');
             $table->unsignedInteger('price');
             $table->jsonb('characteristics');
             $table->timestamps();

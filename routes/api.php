@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('room-type', RoomTypeController::class)->only(['index', 'show']);
 Route::apiResource('package', PackageController::class)->only(['index', 'show']);
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::apiResource('package', PackageController::class)->except(['index', 'show']);
 });
