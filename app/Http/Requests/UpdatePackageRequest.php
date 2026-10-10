@@ -23,12 +23,15 @@ class UpdatePackageRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $required = $this->isMethod('patch') ? 'sometimes' : 'required';
+
         return [
-            'name' => [$this->isMethod('patch') ? 'sometimes' : 'required', 'string', 'max:255', Rule::unique('packages', 'name')->ignore($this->package)],
-            'short_description' => [$this->isMethod('patch') ? 'sometimes' : 'required', 'string', 'max:255'],
-            'long_description' => [$this->isMethod('patch') ? 'sometimes' : 'required', 'string'],
-            'price' => [$this->isMethod('patch') ? 'sometimes' : 'required', 'digits_between:1,4'],
-            'characteristics' => [$this->isMethod('patch') ? 'sometimes' : 'required', 'array'],
+            'name' => [$required, 'string', 'max:255', Rule::unique('packages', 'name')->ignore($this->package)],
+            'short_description' => [$required, 'string', 'max:255'],
+            'long_description' => [$required, 'string'],
+            'price' => [$required, 'digits_between:1,4'],
+            'characteristics' => [$required, 'array'],
         ];
     }
 

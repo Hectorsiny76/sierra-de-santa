@@ -21,6 +21,7 @@ class RoomTypeFactory extends Factory
             'name' => 'Cuarto Tipo '.$this->faker->word.' '.$this->faker->randomNumber(2),
             'img_path' => '/storage/room_type/'.$this->faker->word.'.jpg',
             'description' => $this->faker->text,
+            'max_capacity' => $this->faker->randomNumber(1),
         ];
     }
 }

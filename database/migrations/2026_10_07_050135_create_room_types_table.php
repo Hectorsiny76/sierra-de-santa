@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('name')->unique();
             $table->string('img_path');
             $table->string('description')->nullable();
+            $table->unsignedBigInteger('max_capacity')->default(1);
             $table->timestamps();
         });
     }

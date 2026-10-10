@@ -14,4 +14,5 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::apiResource('package', PackageController::class)->except(['index', 'show']);
+    Route::apiResource('room-type', RoomTypeController::class)->except(['index', 'show']);
 });
