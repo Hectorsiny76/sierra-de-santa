@@ -14,7 +14,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::with('roomType')->get();
+        $rooms = Room::with('roomType', 'images')->get();
         return RoomResource::collection($rooms);
     }
 
@@ -25,7 +25,7 @@ class RoomController extends Controller
     {
         $this->authorize('create', Room::class);
         $room = Room::create($request->validated());
-        return new RoomResource($room->load('roomType'));
+        return new RoomResource($room->load('roomType', 'images'));
     }
 
     /**
@@ -33,7 +33,7 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        $room->load('roomType');
+        $room->load('roomType', 'images');
         return new RoomResource($room);
     }
 
@@ -44,7 +44,7 @@ class RoomController extends Controller
     {
         $this->authorize('update', $room);
         $room->update($request->validated());
-        return new RoomResource($room->load('roomType'));
+        return new RoomResource($room->load('roomType', 'images'));
     }
 
     /**

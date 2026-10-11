@@ -22,6 +22,7 @@ class RoomResource extends JsonResource
             'characteristics' => $this->characteristics,
             'price' => $this->price,
             'room_type' => new RoomTypeResource($this->whenLoaded('roomType')),
+            'images' => RoomImageResource::collection($this->whenLoaded('images')),
         ];
     }
 }
