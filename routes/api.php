@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomImageController;
@@ -28,4 +29,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('reservations/{reservation}/delete', [ReservationController::class, 'forceDelete'])->name('reservations.forcedelete');
     Route::post('/users/{user}/reservations/{reservation}/restore', [ReservationController::class, 'restore'])->name('users.reservations.restore');
     Route::get('reservations/deleted', [ReservationController::class, 'viewTrashed'])->name('reservations.viewtrashed');
+    Route::post('/users/{user}/reservations/{reservation}/checkout', [PaymentController::class, 'checkout'])->name('reservations.checkout');
 });
