@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomImageController;
 use App\Http\Controllers\RoomTypeController;
@@ -23,4 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/rooms/{room}/images/bulk', [RoomImageController::class, 'storeMany'])->name('room.images.storeMany');
     Route::patch('/images/{image}', [RoomImageController::class, 'update'])->name('room.images.update');
     Route::delete('/images/{image}', [RoomImageController::class, 'destroy'])->name('room.images.destroy');
+    Route::apiResource('users.reservations', ReservationController::class);
+    Route::delete('reservations/{reservation}/delete', [ReservationController::class, 'forceDelete'])->name('reservations.forcedelete');
+    Route::post('/users/{user}/reservations/{reservation}/restore', [ReservationController::class, 'restore'])->name('users.reservations.restore');
+    Route::get('reservations/deleted', [ReservationController::class, 'viewTrashed'])->name('reservations.viewtrashed');
 });

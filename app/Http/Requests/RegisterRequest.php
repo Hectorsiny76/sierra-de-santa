@@ -40,7 +40,7 @@ class RegisterRequest extends FormRequest
             'last_name.string' => 'Los apellidos deben de ser de tipo texto',
             'last_name.max' => 'Los apellidos en conjunto deben de tener máximo 50 caracteres',
             'phone.required' => 'El teléfono es obligatorio',
-            'phone.numeric' => 'El teléfono debe ser de tipo numerico',
+            'phone.numeric' => 'El teléfono debe ser de tipo numérico',
             'phone.digits_between' => 'El teléfono debe de tener al menos 10 y máximo 12 caracteres',
             'email.required' => 'El correo es obligatorio',
             'email.string' => 'El correo debe ser de tipo texto',

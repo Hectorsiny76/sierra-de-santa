@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('room_id')->references('id')->on('rooms');
             $table->foreignId('package_id')->nullable()->references('id')->on('packages')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

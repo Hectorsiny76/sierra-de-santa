@@ -109,6 +109,6 @@ class RoomImageController extends Controller
         $this->images->delete($image->path);
         $image->delete();
 
-        return response()->json(null, 204);
+        return response()->json(["message" => "Imagen eliminada correctamente."]);
     }
 }

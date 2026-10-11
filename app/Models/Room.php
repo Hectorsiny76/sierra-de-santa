@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\ReservationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,5 +30,14 @@ class Room extends Model
 
     public function images(){
         return $this->hasMany(RoomImage::class);
+    }
+
+    public function isAvailable(string $start_date, string $end_date, ?int $excludeReservationId = null): bool{
+        return !$this->reservations()
+            ->where('status', '!=', ReservationStatus::Cancelled)
+            ->where('start_date', '<', $end_date)
+            ->where('end_date', '>', $start_date)
+            ->when($excludeReservationId, fn ($query) => $query->where('id', '!=', $excludeReservationId))
+            ->exists();
     }
 }
