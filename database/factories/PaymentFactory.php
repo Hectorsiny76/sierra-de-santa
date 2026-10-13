@@ -21,7 +21,7 @@ class PaymentFactory extends Factory
         return [
             'provider' => 'Prov. '.$this->faker->word(),
             'provider_id' => $this->faker->uuid(),
-            'status' => $this->faker->randomElement(['pending', 'paid', 'cancelled']),
+            'status' => $this->faker->randomElement(['pending', 'succeeded', 'cancelled']),
             'amount' => $this->faker->randomNumber(3),
             'raw_response' => [
                 'message' => $this->faker->text()

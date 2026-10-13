@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRoomTypeRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class UpdateRoomTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255|unique:room_types,name',
+            'name' => 'sometimes|string|max:255|'.Rule::unique('room_types', 'name')->ignore($this->route('room')),
             'description' => 'sometimes|string|max:255',
             'max_capacity' => 'sometimes|integer|max:12',
             'image' => 'sometimes|image|max:2048',

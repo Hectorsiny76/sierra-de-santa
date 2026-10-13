@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('provider');
             $table->string('provider_id')->unique();
-            $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'succeeded', 'cancelled'])->default('pending');
             $table->unsignedInteger('amount');
             $table->json('raw_response');
             $table->string('receipt_number')->nullable();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -16,8 +17,4 @@ Route::get('/fake-checkout', function (Request $request) {
 
 })->name('payments.fake-checkout');
 
-Route::get('/fake-pay', function (Request $request) {
-    return response()->json([
-        'message' => "This simulates a hosted payment page",
-    ]);
-})->name('payments.fake-pay');
+Route::get('/fake-pay', [PaymentController::class, 'fakePay'])->name('payments.fake-pay');
