@@ -10,6 +10,12 @@ use App\Http\Controllers\RoomTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+   return response()->json([
+       "message" => "Hello and welcome to our application!",
+   ]);
+});
+
 Route::apiResource('room-types', RoomTypeController::class)->only(['index', 'show']);
 Route::apiResource('rooms', RoomController::class)->only(['index', 'show']);
 Route::apiResource('packages', PackageController::class)->only(['index', 'show']);
