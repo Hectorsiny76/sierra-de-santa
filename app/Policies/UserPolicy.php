@@ -3,15 +3,32 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\UserRole;
 
 class UserPolicy
 {
+
+    /**
+     *
+     * @param User $user
+     * @param User $authUser
+     * @return bool
+     *
+     * Determine that the only one to be able to get access to the resource is the owner
+     *
+     */
+
+    protected function isSelf(User $user, User $authUser): bool
+    {
+        return $user->id === $authUser->id;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -19,7 +36,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return false;
+        return $this->isSelf($user, $model);
     }
 
     /**
@@ -35,7 +52,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return false;
+        return $this->isSelf($user, $model);
     }
 
     /**
@@ -43,7 +60,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return false;
+        return $this->isSelf($user, $model);
     }
 
     /**
@@ -64,11 +81,11 @@ class UserPolicy
 
     public function viewReservations(User $user, User $authUser): bool
     {
-        return $authUser->id === $user->id;
+        return $this->isSelf($user, $authUser);
     }
 
     public function createReservation(User $user, User $authUser): bool
     {
-        return $authUser->id === $user->id;
+        return $this->isSelf($user, $authUser);
     }
 }

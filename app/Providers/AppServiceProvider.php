@@ -22,7 +22,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function (?User $user, string $ability) {
+        Gate::before(function (?User $user, string $ability, array $arguments = []) {
+            $subject = $arguments[0] ?? null;
+
+            if ($subject instanceof User) {
+                return null;
+            }
+
            return $user?->role === UserRole::Admin ? true : null;
         });
     }
