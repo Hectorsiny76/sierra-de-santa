@@ -8,6 +8,7 @@ use App\Http\Resources\RoomTypeResource;
 use App\Models\RoomType;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class RoomTypeController extends Controller
@@ -73,7 +74,16 @@ class RoomTypeController extends Controller
         if($roomType->img_path){
             $this->images->delete($roomType->img_path);
         }
+
+        $oldRoomType = $roomType;
+
         $roomType->delete();
+
+        Log::info("Tipo de cuarto $oldRoomType->id eliminado", [
+            'room_type' => $oldRoomType,
+            'user' => auth()->user(),
+        ]);
+
         return response()->json(["message" => "Tipo de cuarto eliminado correctamente."]);
     }
 }

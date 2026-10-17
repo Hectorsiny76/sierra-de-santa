@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\RoomImage;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RoomImageController extends Controller
 {
@@ -107,7 +108,15 @@ class RoomImageController extends Controller
         $this->authorize('update', $image->room);
 
         $this->images->delete($image->path);
+
+        $oldImage = $image;
+
         $image->delete();
+
+        Log::info("Imagen $oldImage->id eliminado", [
+            'image' => $oldImage,
+            'user' => auth()->user(),
+        ]);
 
         return response()->json(["message" => "Imagen eliminada correctamente."]);
     }

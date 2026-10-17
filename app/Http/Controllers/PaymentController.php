@@ -10,6 +10,7 @@ use App\ReservationStatus;
 use App\Services\Payments\PaymentGatewayInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -20,6 +21,13 @@ class PaymentController extends Controller
         $this->authorize('view', $reservation);
 
         if($reservation->status != ReservationStatus::Pending){
+
+            Log::error('Intento de reservación fallido.', [
+                'reservation_id' => $reservation->id,
+                'status' => $reservation->status,
+                'user_id' => $user->id,
+            ]);
+
             return response ()->json(["message" => "Esta reservación no puede ser pagada."], 409);
         }
 
@@ -37,6 +45,13 @@ class PaymentController extends Controller
         ]);
 
         $event = $this->gateway->verifyWebhook($payload, 'fake-signature');
+
+        Log::info('', [
+            'payload' => $payload,
+            'IP' => $request->ip(),
+            'event' => $event,
+        ]);
+
         return $this->handlePaymentEvent($event);
     }
 

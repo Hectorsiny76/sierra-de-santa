@@ -6,6 +6,7 @@ use App\Http\Requests\StorePackageRequest;
 use App\Http\Requests\UpdatePackageRequest;
 use App\Http\Resources\PackageResource;
 use App\Models\Package;
+use Illuminate\Support\Facades\Log;
 
 class PackageController extends Controller
 {
@@ -51,6 +52,13 @@ class PackageController extends Controller
     public function destroy(Package $package)
     {
         $this->authorize('delete', $package);
+
+        Log::info('Paquete ' . $package->id . ' - ' . $package->name . ' eliminado', [
+            'id' => $package->id,
+            'name' => $package->name,
+            'user' => auth()->user(),
+        ]);
+
         $package->delete();
         return response()->json(["message" => "Registro eliminado"]);
     }

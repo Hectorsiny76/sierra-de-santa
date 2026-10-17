@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -58,6 +61,43 @@ class UserController extends Controller
 
         return new UserResource($user);
 
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request, User $user)
+    {
+        $user = User::findOrFail($user->id);
+
+        $this->authorize('update', $user);
+
+        if (!Hash::check($request->current_password, $user->password)) {
+
+            Log::error('Fallo en el cambio de contraseña', [
+                'user_id' => $user->id,
+                'password_attempt' => $request->current_password,
+                'IP' => $request->ip(),
+                'Method' => $request->method(),
+                'Browser' => $request->userAgent(),
+            ]);
+
+            return response()->json([
+                'message' => 'La contraseña actual es incorrecta.',
+            ], 422);
+        }
+
+        $user->password = $request->password;
+        $user->save();
+
+        $user->tokens()->delete();
+        $newToken = $user->createToken('api-token')->accessToken;
+
+        Log::info('Cambio de contraseña', [
+            'user_id' => $user->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Contraseña cambiada correctamente.',
+            'token' => $newToken,
+        ]);
     }
 
     /**

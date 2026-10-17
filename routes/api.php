@@ -26,6 +26,7 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::apiResource('users', UserController::class)->only(['index', 'show', 'update']);
+    Route::patch('users/{user}/password', [UserController::class, 'updatePassword'])->name('users.updatepassword');
     Route::apiResource('packages', PackageController::class)->except(['index', 'show']);
     Route::apiResource('rooms', RoomController::class)->except(['index', 'show']);
     Route::apiResource('room-types', RoomTypeController::class)->except(['index', 'show']);

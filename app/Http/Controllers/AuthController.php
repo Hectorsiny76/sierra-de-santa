@@ -8,19 +8,23 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request){
         $request->validated();
 
-        $user = User::create([
+        $user = new User([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'password' => $request->password,]
-        );
+            ]);
+
+        $user->password = $request->password;
+
+        $user->save();
 
         $token = $user->createToken('api-token')->plainTextToken;
 
@@ -36,6 +40,13 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if(!$user || !Hash::check($request->password, $user->password)){
+            Log::error('Fallo en el inicio de sesión', [
+                'email' => $request->email,
+                'password' => $request->password,
+                'IP' => $request->ip(),
+                'Method' => $request->method(),
+                'Browser' => $request->userAgent(),
+            ]);
             return response()->json(['message' => 'Las credenciales no son correctas.'], 401);
         }
         $token = $user->createToken('api-token')->plainTextToken;

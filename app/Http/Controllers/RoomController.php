@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRoomRequest;
 use App\Http\Requests\UpdateRoomRequest;
 use App\Http\Resources\RoomResource;
 use App\Models\Room;
+use Illuminate\Support\Facades\Log;
 
 class RoomController extends Controller
 {
@@ -53,7 +54,16 @@ class RoomController extends Controller
     public function destroy(Room $room)
     {
         $this->authorize('delete', $room);
+
+        $oldRoom = $room;
+
         $room->delete();
+
+        Log::info("Room $oldRoom->id eliminado", [
+            'room' => $oldRoom,
+            'user' => auth()->user(),
+        ]);
+
         return response()->json(["message" => "El cuarto se ha eliminado."]);
     }
 }
