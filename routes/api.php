@@ -20,8 +20,8 @@ Route::get('/', function () {
 Route::apiResource('room-types', RoomTypeController::class)->only(['index', 'show']);
 Route::apiResource('rooms', RoomController::class)->only(['index', 'show']);
 Route::apiResource('packages', PackageController::class)->only(['index', 'show']);
-Route::post('register', [AuthController::class, 'register'])->name('register');
-Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::post('register', [AuthController::class, 'register'])->name('register')->name('register');
+Route::post('login', [AuthController::class, 'login'])->name('login')->name("login");
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');

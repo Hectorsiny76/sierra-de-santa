@@ -33,7 +33,8 @@ class RoomTypeController extends Controller
         $this->authorize('create', RoomType::class);
         if ($request->hasFile('image')) {
             $path = $this->images->store($request->file('image'), 'room_types');
-        }
+        } else
+            $path = null;
         $roomType = RoomType::create([
             'name' => $request->name,
             'description' => $request->description,

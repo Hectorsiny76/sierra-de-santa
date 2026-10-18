@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('room_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('img_path');
+            $table->string('img_path')->nullable();
             $table->string('description')->nullable();
             $table->unsignedBigInteger('max_capacity')->default(1);
             $table->timestamps();

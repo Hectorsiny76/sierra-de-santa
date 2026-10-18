@@ -25,7 +25,7 @@ class StoreRoomTypeRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|unique:room_types,name',
             'description' => 'required|string|max:255',
-            'max_capacity' => 'required|integer|max:12',
+            'max_capacity' => 'required|integer|max:6|min:1',
             'image' => 'sometimes|image|max:2048',
         ];
     }
