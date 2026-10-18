@@ -56,7 +56,7 @@ class PackageController extends Controller
         Log::info('Paquete ' . $package->id . ' - ' . $package->name . ' eliminado', [
             'id' => $package->id,
             'name' => $package->name,
-            'user' => auth()->user(),
+            'user_id' => auth()->user()->id,
         ]);
 
         $package->delete();

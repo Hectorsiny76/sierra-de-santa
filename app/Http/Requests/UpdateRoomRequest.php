@@ -24,11 +24,11 @@ class UpdateRoomRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255|unique:rooms,name', Rule::unique('room', 'name')->ignore($this->route('room')),
-            'slug' => 'sometimes|string|max:255|unique:rooms,slug',Rule::unique('room', 'slug')->ignore($this->route('room')),
+            'name' => ['sometimes','string','max:255', Rule::unique('rooms', 'name')->ignore($this->route('room'))],
+            'slug' => ['sometimes','string','max:255', Rule::unique('rooms', 'slug')->ignore($this->route('room'))],
             'general_description' => 'sometimes|string|max:255',
             'characteristics' => 'sometimes|array',
-            'price' => 'sometimes|numeric|digits_between:1,4',
+            'price' => 'sometimes|integer|gte:50|lte:9999',
             'room_type_id' => 'sometimes|integer|exists:room_types,id',
         ];
     }
@@ -44,8 +44,9 @@ class UpdateRoomRequest extends FormRequest
             'general_description.string' => 'La descripción general debe ser una cadena de texto',
             'general_description.max' => 'La descripción general no puede superar los 255 caracteres',
             'characteristics.array' => 'Las características deben de ser de tipo array',
-            'price.numeric' => 'El precio debe ser un numero',
-            'price.digits_between' => 'El precio debe ser mayor que 1 y menor a 4',
+            'price.integer' => 'El precio debe ser un numero',
+            'price.gte' => 'El precio debe ser mayor o igual a 50',
+            'price.lte' => 'El precio debe ser menor o igual a 9999',
             'room_type_id.integer' => 'El id del tipo de cuarto debe ser un entero',
             'room_type_id.exists' => 'El id del tipo de cuarto no existe',
         ];

@@ -82,7 +82,7 @@ class RoomTypeController extends Controller
 
         Log::info("Tipo de cuarto $oldRoomType->id eliminado", [
             'room_type' => $oldRoomType,
-            'user' => auth()->user(),
+            'user_id' => auth()->user()->id,
         ]);
 
         return response()->json(["message" => "Tipo de cuarto eliminado correctamente."]);

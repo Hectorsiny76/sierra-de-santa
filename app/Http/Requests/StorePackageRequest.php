@@ -26,7 +26,7 @@ class StorePackageRequest extends FormRequest
             'name' => 'required|string|max:255|unique:packages,name',
             'short_description' => 'required|string|max:255',
             'long_description' => 'required|string',
-            'price' => 'required|digits_between:1,4',
+            'price' => 'required|integer|gt:100|lte:9999',
             'characteristics' => 'required|array',
         ];
     }
@@ -39,7 +39,9 @@ class StorePackageRequest extends FormRequest
             'short_description.max' => 'La descripción corta no puede superar los 255 caracteres.',
             'long_description.required' => 'La descripción larga es requerida.',
             'price.required' => 'El precio es requerido.',
-            'price.digits_between' => 'El precio no puede superar los 4 dígitos.',
+            'price.integer' => 'El precio debe ser un entero.',
+            'price.gt' => 'El precio debe ser mayor a 100.',
+            'price.lte' => 'El precio debe ser menor a 9999.',
             'characteristics.required' => 'Al menos una característica es requerida.',
         ];
     }

@@ -27,7 +27,7 @@ class StoreRoomRequest extends FormRequest
             'slug' => 'required|string|max:255|unique:rooms,slug',
             'general_description' => 'required|string|max:255',
             'characteristics' => 'required|array',
-            'price' => 'required|numeric|digits_between:1,4',
+            'price' => 'required|integer|gte:50|lte:9999',
             'room_type_id' => 'required|integer|exists:room_types,id',
         ];
     }
@@ -48,8 +48,9 @@ class StoreRoomRequest extends FormRequest
             'characteristics.required' => 'Al menos una característica es requerida',
             'characteristics.array' => 'Las características deben de ser de tipo array',
             'price.required' => 'El precio es requerido',
-            'price.numeric' => 'El precio debe ser un numero',
-            'price.digits_between' => 'El precio debe ser mayor que 1 y menor a 4',
+            'price.integer' => 'El precio debe ser un numero',
+            'price.gte' => 'El precio debe ser mayor o igual a 50',
+            'price.lte' => 'El precio debe ser menor o igual a 9999',
             'room_type_id.required' => 'El id del tipo de cuarto es requerido',
             'room_type_id.integer' => 'El id del tipo de cuarto debe ser un entero',
             'room_type_id.exists' => 'El id del tipo de cuarto no existe',

@@ -24,27 +24,26 @@ class UpdatePackageRequest extends FormRequest
     public function rules(): array
     {
 
-        $required = $this->isMethod('patch') ? 'sometimes' : 'required';
-
         return [
-            'name' => [$required, 'string', 'max:255', Rule::unique('packages', 'name')->ignore($this->route('package'))],
-            'short_description' => [$required, 'string', 'max:255'],
-            'long_description' => [$required, 'string'],
-            'price' => [$required, 'digits_between:1,4'],
-            'characteristics' => [$required, 'array'],
+            'name' => ['sometimes', 'string', 'max:255', Rule::unique('packages', 'name')->ignore($this->route('package'))],
+            'short_description' => ['sometimes', 'string', 'max:255'],
+            'long_description' => ['sometimes', 'string'],
+            'price' => ['sometimes', 'integer', 'gt:100', 'lt:9999'],
+            'characteristics' => ['sometimes', 'array'],
         ];
     }
 
     public function messages(): array{
         return [
+            'name.string' => 'El nombre debe de ser tipo texto.',
             'name.max' => 'El nombre no puede superar los 255 caracteres.',
-            'name.required' => 'El nombre es requerido.',
-            'short_description.required' => 'La descripción corta es requerida.',
+            'name.unique' => 'El nombre ya existe.',
+            'short_description.string' => 'La descripción corta debe de ser tipo texto.',
             'short_description.max' => 'La descripción corta no puede superar los 255 caracteres.',
-            'long_description.required' => 'La descripción larga es requerida.',
-            'price.required' => 'El precio es requerido.',
-            'price.digits_between' => 'El precio no puede superar los 4 dígitos.',
-            'characteristics.required' => 'Al menos una característica es requerida.',
+            'long_description.string' => 'La descripción larga corta debe de ser tipo texto.',
+            'price.integer' => 'El precio debe ser un entero.',
+            'price.gt' => 'El precio debe ser mayor a 100.',
+            'price.lte' => 'El precio debe ser menor a 9999.',
             'characteristics.array' => 'Las características deben ser de tipo array.',
         ];
     }
