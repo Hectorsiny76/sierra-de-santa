@@ -200,3 +200,64 @@ test('Un usuario autenticado no puede actualizar un cuarto', function () {
         'name' => 'Nametest2',
     ]);
 });
+
+test('Un admin puede actualizar un cuarto', function () {
+    $response = $this->actingAs($this->admin)->putJson(route('rooms.update', $this->room->id), [
+        'name' => 'Nametest2',
+        'slug' => 'name-test2',
+        'general_description' => 'A general description made for testing.',
+        'characteristics' => [
+            0 => 'Hello'
+        ],
+        'price' => 152,
+        'room_type_id' => $this->roomType->id,
+    ]);
+    $response->assertStatus(200);
+    $this->assertDatabaseHas('rooms', [
+        'name' => 'Nametest2',
+    ]);
+});
+
+test('Un admin puede actualizar un cuarto con el mismo nombre', function () {
+    $response = $this->actingAs($this->admin)->putJson(route('rooms.update', $this->room->id), [
+        'name' => 'Nametest',
+    ]);
+    $response->assertStatus(200);
+    $this->assertDatabaseHas('rooms', [
+        'name' => 'Nametest',
+    ]);
+});
+
+test('Un admin puede actualizar un cuarto con el mismo slug', function () {
+    $response = $this->actingAs($this->admin)->putJson(route('rooms.update', $this->room->id), [
+        'slug' => 'name-test',
+    ]);
+    $response->assertStatus(200);
+    $this->assertDatabaseHas('rooms', [
+        'slug' => 'name-test',
+    ]);
+});
+
+test('Un usuario no autenticado no puede eliminar un cuarto', function () {
+    $response = $this->deleteJson(route('rooms.destroy', $this->room->id));
+    $response->assertStatus(401);
+    $this->assertDatabaseHas('rooms', [
+        'slug' => 'name-test',
+    ]);
+});
+
+test('Un usuario autenticado no puede eliminar un cuarto', function () {
+    $response = $this->actingAs($this->user)->deleteJson(route('rooms.destroy', $this->room->id));
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('rooms', [
+        'slug' => 'name-test',
+    ]);
+});
+
+test('Un admin puede eliminar un cuarto', function () {
+    $response = $this->actingAs($this->admin)->deleteJson(route('rooms.destroy', $this->room->id));
+    $response->assertStatus(200);
+    $this->assertDatabaseMissing('rooms', [
+        'slug' => 'name-test',
+    ]);
+});

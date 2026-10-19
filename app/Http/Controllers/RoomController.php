@@ -61,7 +61,7 @@ class RoomController extends Controller
 
         Log::info("Room $oldRoom->id eliminado", [
             'room' => $oldRoom,
-            'user' => auth()->user(),
+            'user_id' => auth()->user()->id,
         ]);
 
         return response()->json(["message" => "El cuarto se ha eliminado."]);
