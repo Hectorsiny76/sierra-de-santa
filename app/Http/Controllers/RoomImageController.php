@@ -115,7 +115,7 @@ class RoomImageController extends Controller
 
         Log::info("Imagen $oldImage->id eliminado", [
             'image' => $oldImage,
-            'user' => auth()->user(),
+            'user' => auth()->user()->id,
         ]);
 
         return response()->json(["message" => "Imagen eliminada correctamente."]);

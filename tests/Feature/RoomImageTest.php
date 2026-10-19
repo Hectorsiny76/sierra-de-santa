@@ -5,11 +5,16 @@ use App\Models\RoomImage;
 use Illuminate\Http\UploadedFile;
 
 beforeEach(function(){
+
     $this->admin = adminUser();
     $this->user = regularUser();
+
     $this->room = Room::factory()->create();
+    $this->secondRoom = Room::factory()->create();
+
     $this->image = UploadedFile::fake()->image('test.jpg');
     $this->description = 'description-test';
+
     $this->images = [
       0 => UploadedFile::fake()->image('test1.jpg'),
       1 => UploadedFile::fake()->image('test2.jpg'),
@@ -22,30 +27,43 @@ beforeEach(function(){
       2 => 'description-test3',
       3 => 'description-test4',
     ];
-});
 
-test('Un usuario no autenticado no puede guarda una imagen con su cuarto', function () {
+});
+function createExistingRoomImage($test): RoomImage{
+
+    return RoomImage::factory()->create([
+        'path' => 'rooms/test.jpg',
+        'description' => 'another description',
+        'name' => 'A cozy room',
+        'room_id' => $test->room->id,
+    ]);
+}
+
+test('Un usuario no autenticado no puede guardar una imagen con su cuarto', function () {
     $response = $this->postJson(route('room.images.store', $this->room->id), [
         'image' => $this->image,
+        'description' => 'another-description-test',
     ]);
+
     $response->assertStatus(401);
     $this->assertDatabaseMissing('room_images', [
-        'room_id' => $this->room->id,
+        'description' => 'another-description-test',
     ]);
 });
 
 test('Un usuario autenticado no puede guardar una imagen con su cuarto', function () {
     $response = $this->actingAs($this->user)->postJson(route('room.images.store', $this->room->id), [
         'image' => $this->image,
+        'description' => 'another-description-test',
     ]);
     $response->assertStatus(403);
     $this->assertDatabaseMissing('room_images', [
-        'room_id' => $this->room->id,
+        'description' => 'another-description-test',
     ]);
 });
 
 test('Una imagen puede ser guardada con su cuarto', function () {
-    $response = $this->actingAs($this->admin)->postJson(route('room.images.store', $this->room->id), [
+    $response = $this->actingAs($this->admin)->postJson(route('room.images.store', $this->secondRoom->id), [
         'description' => $this->description,
         'image' => $this->image,
     ]);
@@ -62,10 +80,11 @@ test('Una imagen mayor a 2MB no puede ser guardada', function () {
 
     $response = $this->actingAs($this->admin)->postJson(route('room.images.store', $this->room->id), [
         'image' => $largeImage,
+        'description' => 'A chubby image'
     ]);
     $response->assertStatus(422)->assertJsonValidationErrors('image');
     $this->assertDatabaseMissing('room_images', [
-        'room_id' => $this->room->id,
+        'description' => 'A chubby image',
     ]);
 });
 
@@ -74,20 +93,21 @@ test('Solo imágenes pueden ser guardadas', function () {
 
     $response = $this->actingAs($this->admin)->postJson(route('room.images.store', $this->room->id), [
         'image' => $otherFile,
+        'description' => "A nice pdf"
     ]);
     $response->assertStatus(422)->assertJsonValidationErrors('image');
     $this->assertDatabaseMissing('room_images', [
-        'room_id' => $this->room->id,
+        'description' => 'A nice pdf',
     ]);
 });
 
 test('Un admin puede guardar varias imágenes', function () {
-    $response = $this->actingAs($this->admin)->postJson(route('room.images.storeMany', $this->room->id), [
+    $response = $this->actingAs($this->admin)->postJson(route('room.images.storeMany', $this->secondRoom->id), [
         'images' => $this->images,
     ]);
     $response->assertStatus(200);
     $this->assertDatabaseHas('room_images', [
-        'room_id' => $this->room->id,
+        'room_id' => $this->secondRoom->id,
     ]);
 });
 
@@ -107,12 +127,27 @@ test('Un admin no puede guardar mas de 10 imágenes', function () {
         11 => UploadedFile::fake()->image('test.jpg'),
     ];
 
-    $response = $this->actingAs($this->admin)->postJson(route('room.images.storeMany', $this->room->id), [
+    $response = $this->actingAs($this->admin)->postJson(route('room.images.storeMany', $this->secondRoom->id), [
         'images' => $images,
     ]);
     $response->assertStatus(422)->assertJsonValidationErrors('images');
     $this->assertDatabaseMissing('room_images', [
-        'room_id' => $this->room->id,
+        'room_id' => $this->secondRoom->id,
+    ]);
+});
+
+test('Un usuario no autenticado no puede actualizar una imagen', function () {
+    $newImage = UploadedFile::fake()->image('test1.jpg');
+
+    $existingImage = createExistingRoomImage($this);
+
+    $response = $this->patchJson(route('room.images.update', $existingImage->id), [
+        'image' => $newImage,
+        'description' => 'another-description-test',
+    ]);
+    $response->assertStatus(401);
+    $this->assertDatabaseMissing('room_images', [
+        'description' => 'another-description-test',
     ]);
 });
 
@@ -120,18 +155,63 @@ test('Un admin puede actualizar una imagen', function () {
 
     $newImage = UploadedFile::fake()->image('test1.jpg');
 
-    $this->actingAs($this->admin)->postJson(route('room.images.store', $this->room->id), [
-        'image' => $this->image,
-    ]);
+    $existingImage = createExistingRoomImage($this);
 
-    $image = $this->room->images()->first();
-
-    $response = $this->actingAs($this->admin)->patchJson(route('room.images.update', $image->id), [
+    $response = $this->actingAs($this->admin)->patchJson(route('room.images.update', $existingImage->id), [
         'image' => $newImage,
+        'description' => 'A brand new image'
     ]);
 
     $response->assertStatus(200);
     $this->assertDatabaseHas('room_images', [
-        'name' => 'test1.jpg'
+        'description' => 'A brand new image'
+    ]);
+});
+
+test('Un admin puede actualizar la descripción de una imagen', function () {
+
+    $existingImage = createExistingRoomImage($this);
+
+    $response = $this->actingAs($this->admin)->patchJson(route('room.images.update', $existingImage->id), [
+        'description' => $this->description,
+    ]);
+
+    $response->assertStatus(200);
+    $this->assertDatabaseHas('room_images', [
+        'description' => $this->description,
+    ]);
+});
+
+test('Un usuario no autenticado no puede eliminar una imagen de un cuarto', function () {
+
+    $existingImage = createExistingRoomImage($this);
+
+    $response = $this->deleteJson(route('room.images.destroy', $existingImage->id));
+
+    $response->assertStatus(401);
+    $this->assertDatabaseHas('room_images', [
+        'name' => 'A cozy room',
+    ]);
+});
+
+test('Un usuario autenticado no puede eliminar una imagen de un cuarto', function () {
+    $existingImage = createExistingRoomImage($this);
+
+    $response = $this->actingAs($this->user)->deleteJson(route('room.images.destroy', $existingImage->id));
+
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('room_images', [
+        'name' => 'A cozy room',
+    ]);
+});
+
+test('Un admin puede eliminar una imagen de un cuarto', function () {
+    $existingImage = createExistingRoomImage($this);
+
+    $response = $this->actingAs($this->admin)->deleteJson(route('room.images.destroy', $existingImage->id));
+
+    $response->assertStatus(200);
+    $this->assertDatabaseMissing('room_images', [
+        'name' => 'A cozy room',
     ]);
 });
