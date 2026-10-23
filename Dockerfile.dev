@@ -1,4 +1,4 @@
-FROM serversideup/php:8.5-fpm-nginx
+FROM serversideup/php:8.5.12-fpm-nginx
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000

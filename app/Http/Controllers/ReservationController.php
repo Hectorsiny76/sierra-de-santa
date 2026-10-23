@@ -87,7 +87,7 @@ class ReservationController extends Controller
             ->with(['room', 'package', 'user'])
             ->findOrFail($reservation->id);
 
-        $this->authorize('view', $reservation);
+        $this->authorize('view-reservations', $user);
 
         return new ReservationResource($reservation);
     }

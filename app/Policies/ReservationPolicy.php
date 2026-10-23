@@ -9,6 +9,12 @@ use Illuminate\Auth\Access\Response;
 
 class ReservationPolicy
 {
+
+    protected function isAdmin(User $user): bool
+    {
+        return $user?->role === UserRole::Admin;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
@@ -54,7 +60,7 @@ class ReservationPolicy
      */
     public function restore(User $user, Reservation $reservation): bool
     {
-        return false;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -62,11 +68,11 @@ class ReservationPolicy
      */
     public function forceDelete(User $user, Reservation $reservation): bool
     {
-        return false;
+        return $this->isAdmin($user);
     }
 
     public function viewTrashed(User $user): bool
     {
-        return false;
+        return $this->isAdmin($user);
     }
 }

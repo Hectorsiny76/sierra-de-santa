@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->unsignedInteger('guest_count');
             $table->unsignedInteger('total_price');
-            $table->enum('status', ['pending', 'confirmed', 'checked_in', 'checked_out', 'cancelled', 'refunded'])->default('Pending');
+            $table->enum('status', ['pending', 'confirmed', 'checked_in', 'checked_out', 'cancelled', 'refunded'])->default('pending');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('room_id')->references('id')->on('rooms');
             $table->foreignId('package_id')->nullable()->references('id')->on('packages')->nullOnDelete();

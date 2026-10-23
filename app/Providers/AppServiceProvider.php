@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Reservation;
 use App\Models\User;
 use App\UserRole;
 use Illuminate\Support\Facades\Gate;
@@ -25,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function (?User $user, string $ability, array $arguments = []) {
             $subject = $arguments[0] ?? null;
 
-            if ($subject instanceof User) {
+            if ($subject instanceof User || $subject instanceof Reservation) {
                 return null;
             }
 
