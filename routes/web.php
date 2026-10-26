@@ -18,3 +18,5 @@ Route::get('/fake-checkout', function (Request $request) {
 })->name('payments.fake-checkout');
 
 Route::get('/fake-pay', [PaymentController::class, 'fakePay'])->name('payments.fake-pay');
+
+Route::post('/reservations/payments/webhook', [PaymentController::class, 'webhook'])->name('reservations.webhook');
