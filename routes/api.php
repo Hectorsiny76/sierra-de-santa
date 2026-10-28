@@ -11,6 +11,13 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::pattern('room_type', '[0-9]+');
+Route::pattern('package', '[0-9]+');
+Route::pattern('reservation', '[0-9]+');
+Route::pattern('room', '[0-9]+');
+Route::pattern('user', '[0-9]+');
+Route::pattern('image', '[0-9]+');
+
 Route::get('/', function () {
    return response()->json([
        "message" => "Hello and welcome to our application!",
