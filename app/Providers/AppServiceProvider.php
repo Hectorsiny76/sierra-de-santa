@@ -7,6 +7,8 @@ use App\Models\User;
 use App\UserRole;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Prometheus\CollectorRegistry;
+use Prometheus\Storage\Redis as RedisStorage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +17,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(CollectorRegistry::class, fn () => new CollectorRegistry(
+            new RedisStorage([
+                'host' => config('database.redis.default.host'),
+                'port' => (int)config('database.redis.default.port'),
+            ])
+        ));
     }
 
     /**

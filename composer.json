@@ -10,7 +10,13 @@
         "dedoc/scramble": "^0.13.47",
         "laravel/framework": "^13.17",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "open-telemetry/exporter-otlp": "^1.5",
+        "open-telemetry/opentelemetry-auto-laravel": "^1.10",
+        "open-telemetry/sdk": "^1.16",
+        "php-http/guzzle7-adapter": "^1.1",
+        "predis/predis": "^3.7",
+        "promphp/prometheus_client_php": "^2.15"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
@@ -81,7 +87,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "tbachert/spi": true
         }
     },
     "minimum-stability": "stable",

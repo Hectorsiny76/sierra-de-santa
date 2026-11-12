@@ -11,6 +11,13 @@ services:
           -   db
       environment:
           AUTORUN_ENABLED: "false"
+          OTEL_PHP_AUTOLOAD_ENABLED: "true"
+          OTEL_SERVICE_NAME: "laravel-app"
+          OTEL_TRACES_EXPORTER: "otlp"
+          OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+          OTEL_EXPORTER_OTLP_ENDPOINT: "http://tempo:4318"
+          OTEL_METRICS_EXPORTER: "none"
+          OTEL_LOGS_EXPORTER: "none"
 
   db:
       image: postgres:17
@@ -22,5 +29,104 @@ services:
           POSTGRES_PASSWORD: ${DB_PASSWORD}
       volumes:
           -   dbdata:/var/lib/postgresql/data
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_URI: 'db:5432/${DB_DATABASE}?sslmode=disable'
+      DATA_SOURCE_USER: "${DB_USERNAME}"
+      DATA_SOURCE_PASS: "${DB_PASSWORD}"
+    ports:
+      - "9188:9187"
+    depends_on:
+      - db
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9091:9090"
+    depends_on:
+      - postgres-exporter
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+
+  redis:
+    image: redis:alpine
+    command: ["redis-server", "--maxmemory", "256mb"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+    ports:
+      - "9121:9121"
+    depends_on:
+      - redis
+
+  loki:
+    image: grafana/loki:latest
+    volumes:
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+
+  alloy:
+    image: grafana/alloy:latest
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      - ./storage/logs:/var/log/laravel:ro
+      - alloy-data:/var/lib/alloy/data
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    ports:
+      - "12345:12345"
+    depends_on:
+      - loki
+
+  tempo:
+    image: grafana/tempo:2.10.1
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml:ro
+    ports:
+      - "3200:3200"
+
 volumes:
     dbdata:
+    prometheus-data:
+    grafana-data:
+    redis-data:
+    alloy-data:
+    loki-data:

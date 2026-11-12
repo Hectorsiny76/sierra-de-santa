@@ -1,0 +1,26 @@
+// 1. Find the log files
+local.file_match "laravel" {
+    path_targets = [{"__path__" = "/var/log/laravel/*.log", "job" = "laravel"}]
+}
+
+// 2. Read them
+loki.source.file "laravel" {
+    targets = local.file_match.laravel.targets
+    forward_to = [loki.process.laravel.receiver]
+}
+
+// 3. Join stack traces into one entry
+loki.process "laravel" {
+    stage.multiline{
+        firstline  = "^\\[\\d{4}-\\d{2}-\\d{2}"
+        max_wait_time = "3s"
+    }
+    forward_to = [loki.write.local.receiver]
+}
+
+// 4. Send to Loki
+loki.write "local" {
+    endpoint {
+        url = "http://loki:3100/loki/api/v1/push"
+    }
+}
