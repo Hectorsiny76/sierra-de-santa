@@ -55,6 +55,12 @@ class RoomController extends Controller
     {
         $this->authorize('delete', $room);
 
+        if($room->reservations()->exists() || $room->images()->exists()) {
+            return response()->json([
+               'message' => 'El cuarto no puede ser eliminado debido a que tiene imágenes o reservaciones añadidas.'
+            ], 409);
+        }
+
         $oldRoom = $room;
 
         $room->delete();

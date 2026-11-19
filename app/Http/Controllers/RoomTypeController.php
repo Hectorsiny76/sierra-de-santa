@@ -72,6 +72,13 @@ class RoomTypeController extends Controller
     public function destroy(RoomType $roomType)
     {
         $this->authorize('delete', $roomType);
+
+        if($roomType->rooms()->exists()){
+            return response()->json([
+                'message' => 'Este tipo de cuarto no puede ser eliminado debido a que hay cuartos relacionados a este.',
+            ], 409);
+        }
+
         if($roomType->img_path){
             $this->images->delete($roomType->img_path);
         }
