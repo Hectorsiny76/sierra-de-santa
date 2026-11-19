@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Payment;
+use App\Models\Room;
 use App\Models\RoomImage;
 use App\Models\User;
 use App\UserRole;
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
     {
         Payment::factory(10)->create();
         RoomImage::factory(10)->create();
+        Room::factory(200)->create();
 
         User::factory()->create([
             'first_name' => 'Admin',

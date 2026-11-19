@@ -18,14 +18,8 @@ class RoomFactory extends Factory
      */
     public function definition(): array
     {
-        $validNames = [];
-
-        for($x = 1; $x <= 10; $x++) {
-            $validNames[] = 'Cuarto '.$this->faker->word.' '.$this->faker->randomNumber(2);
-        }
-
         return [
-            'name' => $this->faker->randomElement($validNames),
+            'name' => 'Cuarto '.$this->faker->word.' '.$this->faker->randomNumber(). ' '.$this->faker->randomNumber(),
             'slug' => $this->faker->slug,
             'general_description' => $this->faker->text,
             'price' => $this->faker->randomNumber(3),

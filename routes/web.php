@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PaymentController;
 use App\Models\Reservation;
+use App\Models\Room;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Prometheus\CollectorRegistry;
@@ -41,3 +42,26 @@ Route::get('/slow', function () {
     DB::select('select pg_sleep(0.5)');
     return 'done';
 });
+
+if(app()->environment('local')) {
+    Route::prefix('lab')->group(function () {
+        // Ejecucion del problema Query N+1
+        Route::get('/n-plus-one', function () {
+           $roomTypes = [];
+           foreach( Room::all() as $room ) {
+               $roomTypes[] = $room->roomType->name;
+           }
+           return count($roomTypes) . ' cuartos';
+        });
+
+        // Arreglo del problema
+        Route::get('/eager', function () {
+           $roomTypes = [];
+           foreach( Room::with('roomType')->get() as $room ) {
+               $roomTypes[] = $room->roomType->name;
+           }
+           return count($roomTypes) . ' cuartos';
+        });
+        Route::get('/env', fn () => getenv('OTEL_EXPORTER_OTLP_ENDPOINT') ?: 'missing');
+    });
+}
